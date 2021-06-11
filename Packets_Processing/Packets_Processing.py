@@ -98,29 +98,29 @@ class Packets_Processing(object):
       i = 0
       for pkt in pkts:
           if str(sorted(inputSession,key=str)).split(',')[0:4] == self.sortPackets(pkt).split(',')[0:4]:
-              for j in range(len(updateList)):
-                  if i > updateList[j][0]:
-                      if pkt['IP'].src == inputSession[1]:
-                          pkt.seq += updateList[j][1]
-                          pkt.ack += updateList[j][2]
-                      elif pkt['IP'].dst == inputSession[1]:
-                          pkt.seq += updateList[j][2]
-                          pkt.ack += updateList[j][1]
-                      break
-              i += 1
-          #     seqAdd = 0
-          #     ackAdd = 0
-          #     for j in range(len(updateList)):
-          #         if i > updateList[j][0]:
-          #             if pkt['IP'].src == updateList[j][2]:
-          #                seqAdd += updateList[j][1]
-          #             elif pkt['IP'].dst == updateList[j][2]:
-          #                ackAdd += updateList[j][1]
-          #         else:
-          #             break
-          #     pkt.seq += seqAdd
-          #     pkt.ack += ackAdd
-          # i += 1
+              # for j in range(len(updateList)):
+              #     if i > updateList[j][0]:
+              #         if pkt['IP'].src == inputSession[1]:
+              #             pkt.seq += updateList[j][1]
+              #             pkt.ack += updateList[j][2]
+              #         elif pkt['IP'].dst == inputSession[1]:
+              #             pkt.seq += updateList[j][2]
+              #             pkt.ack += updateList[j][1]
+              #         break
+              # i += 1
+               seqAdd = 0
+               ackAdd = 0
+               for j in range(len(updateList)):
+                   if i > updateList[j][0]:
+                       if pkt['IP'].src == updateList[j][2]:
+                          seqAdd += updateList[j][1]
+                       elif pkt['IP'].dst == updateList[j][2]:
+                          ackAdd += updateList[j][1]
+                   else:
+                       break
+               pkt.seq += seqAdd
+               pkt.ack += ackAdd
+          i += 1
       return (pkts)
       # wrpcap("update.pcap", pkts)
                     
