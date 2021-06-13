@@ -18,7 +18,9 @@ import scapy.layers.http
 
 class httpHeaderUpdate(headerUpdate):
     """
-    Apply HTTP header update.
+    Apply HTTP header update. update.pcap contains the packets after header
+    update operation. update1.pcap contains the final packets after seq/ack
+    updates. 
     """
     def __init__(self, inputSession, packets, fields, oldValues, newValues):
         super().__init__(inputSession, packets, fields, oldValues, newValues)
@@ -37,15 +39,6 @@ class httpHeaderUpdate(headerUpdate):
             if (c == str(sorted(self.inputSession,key=str)) and 
                 pkt.haslayer('HTTP')):
                 for i in range(len(self.fields)):
-                    # print(self.fields[i])
-                    # print(self.oldValues[i])
-                    # print(self.newValues[i])
-                    #Not all packets in the same session has the field[i],
-                    #for ex, not in 200 OK. 
-                    #If the packet does not have field[i], 
-                    #getfieldval(self.fields[i]) will throw error. If the packet
-                    #does not have 'HTTPRequest' in HTTP header, getfieldval 
-                    #will fail too. 
                     if 'HTTPRequest' in pkt['HTTP']:
                         if self.fields[i] in pkt['HTTP']['HTTPRequest'].fields:
                             if (pkt.getfieldval(self.fields[i]) == bytes(self.oldValues[i],'utf-8')):
@@ -67,4 +60,5 @@ class httpHeaderUpdate(headerUpdate):
 #            pp.updateSeqAck(self.inputSession, r)
         pi = packetIO('./update.pcap')
         __packets = pi.readPackets()
-        pp.updateSeqAck(self.inputSession, __packets, self.updateList)
+        pkts = pp.updateSeqAck(self.inputSession, __packets, self.updateList)
+        wrpcap("update1.pcap",pkts,append=True)
